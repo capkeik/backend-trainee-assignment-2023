@@ -1,60 +1,43 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/config"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/pg"
+	"gorm.io/gorm"
 	"log"
 
-	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
 	log.Println("Starting Segmentation Service")
-	cfg := config.Get()
-	_ = cfg
-
-	pgDB, err := pg.Connect()
-
-	if err != nil {
+	if err := run(); err != nil {
 		log.Fatal(err)
-	}
-
-	if pgDB != nil {
-		log.Println("Running PostgreSQL migrations")
-		if err = runMigrations(); err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		log.Fatal("db connection no")
 	}
 }
 
-func runMigrations() error {
-	fn := "main.runMigrations"
-	// can load config because it's implemented to load once
+func run() error {
+	log.Println("Reading config")
 	cfg := config.Get()
+	_ = cfg
 
-	if cfg.PgMigrationsPath == "" {
-		return nil
-	}
-
-	if cfg.PgURL == "" {
-		return errors.New("no PgURL provided")
-	}
-
-	m, err := migrate.New(cfg.PgMigrationsPath, cfg.PgURL)
+	log.Println("Opening DB connection")
+	db, err := pg.Connect()
 	if err != nil {
-		return fmt.Errorf("%s, %w", fn, err)
+		return fmt.Errorf("%s, %w", "Error initializing database:", err)
 	}
+	defer func(db2 *gorm.DB) error {
+		sqlDb, err := db.DB()
 
-	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
-		fmt.Printf("%T: %v", err, err)
-		return fmt.Errorf("%s, %w", fn, err)
-	}
+		log.Println("Closing DB connection")
+		err = sqlDb.Close()
+		if err != nil {
+			return fmt.Errorf("%s, %w", "Error closing DB connection:", err)
+		}
+		return nil
+	}(db)
 
 	return nil
 }
