@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS segments
 CREATE TABLE IF NOT EXISTS user_segments
 (
     user_id INTEGER REFERENCES users (id),
-    seg_id  INTEGER REFERENCES segments (id)
+    segment_id  INTEGER REFERENCES segments (id),
+    PRIMARY KEY (user_id, segment_id)
 );
 
 COMMIT;
