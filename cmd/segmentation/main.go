@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/config"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/pg"
@@ -23,21 +24,29 @@ func run() error {
 	cfg := config.Get()
 	_ = cfg
 
+	db, err := InitDB()
+	if err != nil {
+		return err
+	}
+
+	_ = db
+	return nil
+}
+
+func InitDB() (*gorm.DB, error) {
 	log.Println("Opening DB connection")
 	db, err := pg.Connect()
 	if err != nil {
-		return fmt.Errorf("%s, %w", "Error initializing database:", err)
+		return nil, fmt.Errorf("%s, %w", "Error initializing database:", err)
 	}
-	defer func(db2 *gorm.DB) error {
-		sqlDb, err := db.DB()
-
+	sqlDb, err := db.DB()
+	defer func(sqlDb *sql.DB) {
 		log.Println("Closing DB connection")
 		err = sqlDb.Close()
 		if err != nil {
-			return fmt.Errorf("%s, %w", "Error closing DB connection:", err)
+			err = fmt.Errorf("%s, %w", "Error closing database:", err)
 		}
-		return nil
-	}(db)
+	}(sqlDb)
 
-	return nil
+	return db, err
 }
