@@ -2,24 +2,19 @@ package controller
 
 import (
 	"context"
-	"github.com/capkeik/backend-trainee-assignment-2023/internal/model"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/service/interfaces"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/request"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
 )
 
-type SegmentService interface {
-	Create(slug string) (*model.Segment, error)
-	Delete(slug string) error
-}
-
 type SegmentController struct {
 	ctx     context.Context
-	service SegmentService
+	service interfaces.SegmentService
 }
 
-func NewSegments(ctx context.Context, service SegmentService) *SegmentController {
+func NewSegments(ctx context.Context, service interfaces.SegmentService) *SegmentController {
 	return &SegmentController{
 		ctx:     ctx,
 		service: service,

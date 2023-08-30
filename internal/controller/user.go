@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	"github.com/capkeik/backend-trainee-assignment-2023/internal/model"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/service/interfaces"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/request"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/response"
 	"github.com/labstack/echo/v4"
@@ -11,18 +11,12 @@ import (
 	"strconv"
 )
 
-type UserService interface {
-	GetUserSegments(id int32) (*[]string, error)
-	CreateUser(ctx context.Context, id int32) (*model.User, error)
-	UpdateUserSegments(ctx context.Context, slugsToAdd, slugsToRemove *[]string, userID int32) (*model.User, error)
-}
-
 type UserController struct {
 	ctx     context.Context
-	service UserService
+	service interfaces.UserService
 }
 
-func NewUsers(ctx context.Context, service UserService) *UserController {
+func NewUsers(ctx context.Context, service interfaces.UserService) *UserController {
 	return &UserController{
 		ctx:     ctx,
 		service: service,
