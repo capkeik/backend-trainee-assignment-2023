@@ -57,7 +57,6 @@ func run() error {
 	segmentRoutes := e.Group("/segment")
 	segmentRoutes.POST("", segmentController.Create)
 	segmentRoutes.DELETE("", segmentController.Delete)
-	segmentRoutes.GET("", segmentController.All)
 
 	s := &http.Server{
 		Addr:         cfg.HTTPAddr,

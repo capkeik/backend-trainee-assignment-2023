@@ -58,14 +58,3 @@ func (c SegmentController) Delete(ctx echo.Context) error {
 
 	return ctx.NoContent(http.StatusOK)
 }
-
-// All TODO Remove before pushing with all usages
-func (c SegmentController) All(ctx echo.Context) error {
-	segments, err := c.rep.All()
-
-	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
-	}
-
-	return ctx.JSON(http.StatusOK, segments)
-}

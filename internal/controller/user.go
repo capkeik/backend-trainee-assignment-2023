@@ -3,28 +3,14 @@ package controller
 import (
 	"context"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/repository/pg"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/request"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/response"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 )
 
-// ChangeSegReq TODO Move to internal/web/request
-type ChangeSegReq struct {
-	ToAdd    []string `json:"to_add"`
-	ToRemove []string `json:"to_remove"`
-	Id       int32    `json:"id"`
-}
-
-// UserReq TODO Move to internal/web/request
-type UserReq struct {
-	ID int32 `json:"id"`
-}
-
-type SlugsResp struct {
-	ID    int32    `json:"id"`
-	Slugs []string `json:"slugs"`
-}
 type UserController struct {
 	ctx context.Context
 	rep *pg.UserRepo
@@ -52,11 +38,11 @@ func (c UserController) Get(ctx echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "could not get user"))
 		}
 	}
-	return ctx.JSON(http.StatusOK, SlugsResp{Slugs: *slugs, ID: user.ID})
+	return ctx.JSON(http.StatusOK, response.SlugsResp{Slugs: *slugs, ID: user.ID})
 }
 
 func (c UserController) Create(ctx echo.Context) error {
-	var req UserReq
+	var req request.UserReq
 
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
@@ -71,23 +57,11 @@ func (c UserController) Create(ctx echo.Context) error {
 
 }
 func (c UserController) UpdateSegments(ctx echo.Context) error {
-	var req ChangeSegReq
+	var req request.ChangeSegReq
 
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
 	}
-
-	user, err := c.rep.GetUser(req.Id)
-	if err != nil {
-		return ctx.JSON(http.StatusNotFound, map[string]interface{}{"error": "User not found"})
-	}
-
-	var oldSeg []string
-
-	for _, s := range user.Segments {
-		oldSeg = append(oldSeg, s.Slug)
-	}
-
 	segments, err := c.rep.UpdateUserSegments(c.ctx, &req.ToAdd, &req.ToRemove, req.Id)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})

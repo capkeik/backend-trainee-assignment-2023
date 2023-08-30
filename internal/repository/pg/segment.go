@@ -45,17 +45,3 @@ func (r SegmentRepo) Delete(slug string) error {
 
 	return nil
 }
-
-// All TODO Remove before pushing with all usages
-func (r SegmentRepo) All() ([]*model.Segment, error) {
-	fn := "repository.pg.SegmentRepo.All"
-	var segments []*model.Segment
-
-	res := r.db.Find(&segments)
-	err := res.Error
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", fn, err)
-	}
-
-	return segments, nil
-}
