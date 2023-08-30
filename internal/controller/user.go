@@ -67,7 +67,7 @@ func (c UserController) Create(ctx echo.Context) error {
 		return ctx.JSON(http.StatusConflict, map[string]interface{}{"error": "User already exists"})
 	}
 
-	return ctx.JSON(http.StatusOK, map[string]interface{}{"userId": createUser.ID})
+	return ctx.JSON(http.StatusOK, map[string]interface{}{"id": createUser.ID})
 
 }
 func (c UserController) UpdateSegments(ctx echo.Context) error {
@@ -90,7 +90,7 @@ func (c UserController) UpdateSegments(ctx echo.Context) error {
 
 	segments, err := c.rep.UpdateUserSegments(c.ctx, &req.ToAdd, &req.ToRemove, req.Id)
 	if err != nil {
-		return ctx.NoContent(http.StatusInternalServerError)
+		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
 	}
 
 	return ctx.JSON(http.StatusOK, segments)
