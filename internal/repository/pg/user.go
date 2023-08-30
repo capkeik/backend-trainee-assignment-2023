@@ -14,18 +14,6 @@ type UserRepo struct {
 func NewUserRepo(db *gorm.DB) UserRepo {
 	return UserRepo{db}
 }
-func (r *UserRepo) GetUser(id int32) (*model.User, error) {
-	fn := "repository.pg.CreateUser"
-	var user *model.User
-	res := r.db.First(&user, id)
-	err := res.Error
-
-	if err != nil {
-		return nil, fmt.Errorf("%s, %w", fn, err)
-	}
-
-	return user, nil
-}
 
 func (r *UserRepo) GetUserSegments(id int32) (*[]string, error) {
 	fn := "repository.pg.CreateUser"
