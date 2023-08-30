@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/model"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/response"
 	"gorm.io/gorm"
 )
 
@@ -49,7 +50,11 @@ func (r *UserRepo) CreateUser(ctx context.Context, id int32) (*model.User, error
 	return &user, nil
 }
 
-func (r *UserRepo) UpdateUserSegments(ctx context.Context, slugsToAdd, slugsToRemove *[]string, userID int32) (*model.User, error) {
+func (r *UserRepo) UpdateUserSegments(
+	ctx context.Context,
+	slugsToAdd, slugsToRemove *[]string,
+	userID int32,
+) (*response.UserChanges, error) {
 	fn := "repository.pg.UpdateUserSegments"
 
 	var user model.User
@@ -80,6 +85,10 @@ func (r *UserRepo) UpdateUserSegments(ctx context.Context, slugsToAdd, slugsToRe
 	if err = r.db.Model(&user).Association("Segments").Append(&segmentsToAdd); err != nil {
 		return nil, fmt.Errorf("%s, %w", fn, err)
 	}
-
-	return &user, nil
+	res := response.UserChanges{
+		ID:      user.ID,
+		Removed: slugsToRemove,
+		Added:   slugsToAdd,
+	}
+	return &res, nil
 }

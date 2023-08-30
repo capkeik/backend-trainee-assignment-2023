@@ -38,7 +38,7 @@ func (c UserController) Get(ctx echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "could not get user"))
 		}
 	}
-	return ctx.JSON(http.StatusOK, response.SlugsResp{Slugs: *slugs, ID: id})
+	return ctx.JSON(http.StatusOK, response.Slugs{Slugs: *slugs, ID: id})
 }
 
 func (c UserController) Create(ctx echo.Context) error {
@@ -62,10 +62,10 @@ func (c UserController) UpdateSegments(ctx echo.Context) error {
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
 	}
-	segments, err := c.service.UpdateUserSegments(c.ctx, &req.ToAdd, &req.ToRemove, req.Id)
+	changes, err := c.service.UpdateUserSegments(c.ctx, &req.ToAdd, &req.ToRemove, req.Id)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
 	}
 
-	return ctx.JSON(http.StatusOK, segments)
+	return ctx.JSON(http.StatusOK, changes)
 }
