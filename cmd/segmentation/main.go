@@ -7,6 +7,7 @@ import (
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/controller"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/pg"
 	pg2 "github.com/capkeik/backend-trainee-assignment-2023/internal/repository/pg"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/service"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 	"log"
@@ -41,7 +42,8 @@ func run() error {
 	userRepo := pg2.NewUserRepo(db)
 	segmentRepo := pg2.NewSegmentRepo(db)
 
-	userController := controller.NewUsers(ctx, &userRepo)
+	userService := service.NewUserService(&userRepo)
+	userController := controller.NewUsers(ctx, userService)
 	segmentController := controller.NewSegments(ctx, &segmentRepo)
 
 	// Init echo
