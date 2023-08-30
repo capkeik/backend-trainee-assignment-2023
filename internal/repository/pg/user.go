@@ -14,7 +14,7 @@ type UserRepo struct {
 func NewUserRepo(db *gorm.DB) UserRepo {
 	return UserRepo{db}
 }
-func (r UserRepo) GetUser(id int32) (*model.User, error) {
+func (r *UserRepo) GetUser(id int32) (*model.User, error) {
 	fn := "repository.pg.CreateUser"
 	var user *model.User
 	res := r.db.First(&user, id)
@@ -27,7 +27,7 @@ func (r UserRepo) GetUser(id int32) (*model.User, error) {
 	return user, nil
 }
 
-func (r UserRepo) GetUserSegments(id int32) (*[]string, error) {
+func (r *UserRepo) GetUserSegments(id int32) (*[]string, error) {
 	fn := "repository.pg.CreateUser"
 	var user *model.User
 	res := r.db.Preload("Segments").First(&user, id)
@@ -44,7 +44,7 @@ func (r UserRepo) GetUserSegments(id int32) (*[]string, error) {
 	return &slugs, nil
 }
 
-func (r UserRepo) CreateUser(ctx context.Context, id int32) (*model.User, error) {
+func (r *UserRepo) CreateUser(ctx context.Context, id int32) (*model.User, error) {
 	fn := "repository.pg.CreateUser"
 	user := model.User{ID: id}
 	res := r.db.Create(&user)
@@ -61,7 +61,7 @@ func (r UserRepo) CreateUser(ctx context.Context, id int32) (*model.User, error)
 	return &user, nil
 }
 
-func (r UserRepo) UpdateUserSegments(ctx context.Context, slugsToAdd, slugsToRemove *[]string, userID int32) (*model.User, error) {
+func (r *UserRepo) UpdateUserSegments(ctx context.Context, slugsToAdd, slugsToRemove *[]string, userID int32) (*model.User, error) {
 	fn := "repository.pg.UpdateUserSegments"
 
 	var user model.User

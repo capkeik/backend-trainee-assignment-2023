@@ -15,7 +15,7 @@ func NewSegmentRepo(db *gorm.DB) SegmentRepo {
 	return SegmentRepo{db: db}
 }
 
-func (r SegmentRepo) Create(slug string) (*model.Segment, error) {
+func (r *SegmentRepo) Create(slug string) (*model.Segment, error) {
 	fn := "repository.pg.SegmentRepo.Create"
 	segment := &model.Segment{Slug: slug}
 	log.Println("slug:", slug)
@@ -33,7 +33,7 @@ func (r SegmentRepo) Create(slug string) (*model.Segment, error) {
 	return segment, nil
 }
 
-func (r SegmentRepo) Delete(slug string) error {
+func (r *SegmentRepo) Delete(slug string) error {
 	fn := "repository.pg.SegmentRepo.Delete"
 	var seg *model.Segment
 	res := r.db.
