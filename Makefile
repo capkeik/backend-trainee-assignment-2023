@@ -1,5 +1,5 @@
 run:
-	docker-compose up  --remove-orphans --build
+	chmod +x cmd/segmentation/wait-for-it.sh ; docker-compose up  --remove-orphans --build
 
 lint:
 	gofmt -l -w .
