@@ -2,22 +2,27 @@ package controller
 
 import (
 	"context"
-	"github.com/capkeik/backend-trainee-assignment-2023/internal/repository/pg"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/model"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/request"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
 )
 
-type SegmentController struct {
-	ctx context.Context
-	rep *pg.SegmentRepo
+type SegmentService interface {
+	Create(slug string) (*model.Segment, error)
+	Delete(slug string) error
 }
 
-func NewSegments(ctx context.Context, rep *pg.SegmentRepo) *SegmentController {
+type SegmentController struct {
+	ctx     context.Context
+	service SegmentService
+}
+
+func NewSegments(ctx context.Context, service SegmentService) *SegmentController {
 	return &SegmentController{
-		ctx: ctx,
-		rep: rep,
+		ctx:     ctx,
+		service: service,
 	}
 }
 
@@ -31,7 +36,7 @@ func (c SegmentController) Create(ctx echo.Context) error {
 	log.Println("creating new slug:", segmentReq.Slug)
 	slug := segmentReq.Slug
 
-	_, err := c.rep.Create(slug)
+	_, err := c.service.Create(slug)
 	if err != nil {
 		log.Println("err while creating new slug:", err.Error())
 		return ctx.JSON(http.StatusConflict, map[string]interface{}{"error": "Slug already exists"})
@@ -49,7 +54,7 @@ func (c SegmentController) Delete(ctx echo.Context) error {
 
 	slug := segmentReq.Slug
 	log.Println("deleting slug:", segmentReq.Slug)
-	err := c.rep.Delete(slug)
+	err := c.service.Delete(slug)
 	if err != nil {
 		return ctx.JSON(http.StatusConflict, map[string]interface{}{"error": err.Error()})
 	}
