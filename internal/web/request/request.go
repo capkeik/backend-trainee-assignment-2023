@@ -9,3 +9,7 @@ type ChangeSegReq struct {
 type UserReq struct {
 	ID int32 `json:"id"`
 }
+
+type SegmentReq struct {
+	Slug string `json:"slug"`
+}

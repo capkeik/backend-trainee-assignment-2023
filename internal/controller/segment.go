@@ -3,14 +3,12 @@ package controller
 import (
 	"context"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/repository/pg"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/request"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
 )
 
-type segmentRequest struct {
-	Slug string `json:"slug"`
-}
 type SegmentController struct {
 	ctx context.Context
 	rep *pg.SegmentRepo
@@ -25,7 +23,7 @@ func NewSegments(ctx context.Context, rep *pg.SegmentRepo) *SegmentController {
 
 // Create TODO: add error handling: Invalid slug; Too long slug; Slug Already Exists; Internal Error;
 func (c SegmentController) Create(ctx echo.Context) error {
-	var segmentReq segmentRequest
+	var segmentReq request.SegmentReq
 
 	if err := ctx.Bind(&segmentReq); err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
@@ -43,7 +41,7 @@ func (c SegmentController) Create(ctx echo.Context) error {
 }
 
 func (c SegmentController) Delete(ctx echo.Context) error {
-	var segmentReq segmentRequest
+	var segmentReq request.SegmentReq
 
 	if err := ctx.Bind(&segmentReq); err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
