@@ -1,23 +1,25 @@
 package request
 
-import "time"
+import (
+	"time"
+)
 
 type ChangeSegReq struct {
-	ToAdd    []string `json:"to_add"`
-	ToRemove []string `json:"to_remove"`
-	ID       int32    `json:"id"`
+	ToAdd    []string `json:"to_add" validate:"required"`
+	ToRemove []string `json:"to_remove" validate:"required"`
+	ID       int32    `json:"id" validate:"required"`
 }
 
 type UserReq struct {
-	ID int32 `json:"id"`
+	ID int32 `json:"id" validate:"required"`
 }
 
 type SegmentReq struct {
-	Slug string `json:"slug"`
+	Slug string `json:"slug" validate:"required"`
 }
 
 type RecordsReq struct {
-	ID   int32     `json:"id"`
+	ID   int32     `json:"id" validate:"required"`
 	From time.Time `json:"from"`
 	To   time.Time `json:"to"`
 }

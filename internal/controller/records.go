@@ -6,6 +6,7 @@ import (
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/repository/pg"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/repository/static"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/request"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -15,10 +16,15 @@ import (
 type RecordsController struct {
 	recordsService *pg.RecordsRepo
 	csvRepo        *static.CSVRepo
+	validate       *validator.Validate
 }
 
 func NewRecords(recordsService *pg.RecordsRepo, csvRepo *static.CSVRepo) RecordsController {
-	return RecordsController{recordsService: recordsService, csvRepo: csvRepo}
+	return RecordsController{
+		recordsService: recordsService,
+		csvRepo:        csvRepo,
+		validate:       validator.New(),
+	}
 }
 
 func (c RecordsController) Get(ctx echo.Context) error {
@@ -29,6 +35,10 @@ func (c RecordsController) Get(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
 	}
 
+	if err := c.validate.Struct(req); err != nil {
+		log.Println("Error:" + err.Error())
+		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
+	}
 	records, err := c.recordsService.GetRecords(req.ID, req.From, req.To)
 	if err != nil {
 		log.Println("Error:" + err.Error())
