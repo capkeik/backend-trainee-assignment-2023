@@ -1,9 +1,11 @@
 package request
 
+import "time"
+
 type ChangeSegReq struct {
 	ToAdd    []string `json:"to_add"`
 	ToRemove []string `json:"to_remove"`
-	Id       int32    `json:"id"`
+	ID       int32    `json:"id"`
 }
 
 type UserReq struct {
@@ -12,4 +14,10 @@ type UserReq struct {
 
 type SegmentReq struct {
 	Slug string `json:"slug"`
+}
+
+type RecordsReq struct {
+	ID   int32     `json:"id"`
+	From time.Time `json:"from"`
+	To   time.Time `json:"to"`
 }

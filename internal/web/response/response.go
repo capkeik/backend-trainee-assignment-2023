@@ -10,3 +10,7 @@ type UserChanges struct {
 	Removed *[]string `json:"removed"`
 	Added   *[]string `json:"added"`
 }
+
+type Records struct {
+	Link string `json:"link"`
+}

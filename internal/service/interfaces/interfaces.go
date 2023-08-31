@@ -20,3 +20,7 @@ type SegmentService interface {
 type UpdateRecorder interface {
 	RecordUpdate(added, removed *[]string, id int32) error
 }
+
+//type RecordService interface {
+//	SaveRecordFile
+//}
