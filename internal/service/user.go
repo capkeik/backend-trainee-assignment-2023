@@ -5,6 +5,7 @@ import (
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/model"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/service/interfaces"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/response"
+	"log"
 )
 
 type User struct {
@@ -29,10 +30,13 @@ func (s *User) UpdateUserSegments(
 	slugsToAdd, slugsToRemove *[]string,
 	userID int32,
 ) (*response.UserChanges, error) {
+	log.Println("UserService: ", "Updating user ", userID, " slugs")
 	updates, err := s.User.UpdateUserSegments(ctx, slugsToAdd, slugsToRemove, userID)
 	if err != nil {
+		log.Println("Error: ", err)
 		return nil, err
 	}
+	log.Println("UserService: ", "Recording changes")
 	err = s.Recorder.RecordUpdate(updates.Added, updates.Removed, updates.ID)
 	return updates, nil
 }

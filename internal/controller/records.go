@@ -25,16 +25,19 @@ func (c RecordsController) Get(ctx echo.Context) error {
 	var req request.RecordsReq
 
 	if err := ctx.Bind(&req); err != nil {
+		log.Println("Error:" + err.Error())
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
 	}
 
 	records, err := c.recordsService.GetRecords(req.ID, req.From, req.To)
 	if err != nil {
+		log.Println("Error:" + err.Error())
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"error": "Internal Error"})
 	}
 
 	if len(*records) == 0 {
 		errStr := fmt.Sprintf("No records for user with id <%v>", req.ID)
+		log.Println("Error:" + err.Error())
 		return ctx.JSON(http.StatusNotFound, map[string]interface{}{"error": errStr})
 	}
 
@@ -44,6 +47,7 @@ func (c RecordsController) Get(ctx echo.Context) error {
 		*data = append(*data, rec)
 
 		if err != nil {
+			log.Println("Error:" + err.Error())
 			return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"error": "csv converting error"})
 		}
 	}
@@ -51,23 +55,26 @@ func (c RecordsController) Get(ctx echo.Context) error {
 	err = c.csvRepo.SaveCSV(filename, *data)
 
 	if err != nil {
+		log.Println("Error:" + err.Error())
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{"error": "Error saving csv"})
 	}
 	downPath := fmt.Sprintf("/records/download/csv/%v", filename)
-	return ctx.JSON(http.StatusOK, map[string]interface{}{"link": downPath})
+	log.Println("Successfully saved file: " + downPath)
+	return ctx.JSON(http.StatusOK, map[string]interface{}{"path": downPath})
 }
 
 func (c RecordsController) Download(ctx echo.Context) error {
 	filename := ctx.Param("filename")
-	log.Println(filename)
+	log.Println("Handled download request: " + filename)
 	fileInfo, filePath, err := c.csvRepo.GetCSV(filename)
 	if err != nil {
+		log.Println("Error:" + err.Error())
 		return ctx.JSON(http.StatusNotFound, map[string]interface{}{"error": "File not found"})
 	}
 
 	ctx.Response().Header().Set("Content-Disposition", "attachment; filename="+filename)
 	ctx.Response().Header().Set("Content-Type", "text/csv")
 	ctx.Response().Header().Set("Content-Length", fmt.Sprintf("%d", fileInfo.Size()))
-
+	log.Println("File responded: " + filePath)
 	return ctx.File(filePath)
 }

@@ -2,7 +2,6 @@ package static
 
 import (
 	"encoding/csv"
-	"log"
 	"os"
 )
 
@@ -26,7 +25,6 @@ func (r *CSVRepo) SaveCSV(filename string, data [][]string) error {
 	csvWriter := csv.NewWriter(file)
 
 	for _, row := range data {
-		log.Println(row)
 		err := csvWriter.Write(row)
 		if err != nil {
 			return err

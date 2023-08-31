@@ -26,9 +26,9 @@ func (c SegmentController) Create(ctx echo.Context) error {
 	var segmentReq request.SegmentReq
 
 	if err := ctx.Bind(&segmentReq); err != nil {
+		log.Println("Error:" + err.Error())
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
 	}
-	log.Println("SegmentController:", "creating new slug:", segmentReq.Slug)
 	slug := segmentReq.Slug
 
 	_, err := c.service.Create(slug)
@@ -36,7 +36,7 @@ func (c SegmentController) Create(ctx echo.Context) error {
 		log.Println("err while creating new slug:", err.Error())
 		return ctx.JSON(http.StatusConflict, map[string]interface{}{"error": "Slug already exists"})
 	}
-
+	log.Println("SegmentController:", "creating new slug:", segmentReq.Slug)
 	return ctx.JSON(http.StatusOK, map[string]interface{}{"slug": slug})
 }
 
@@ -48,9 +48,10 @@ func (c SegmentController) Delete(ctx echo.Context) error {
 	}
 
 	slug := segmentReq.Slug
-	log.Println("deleting slug:", segmentReq.Slug)
+	log.Println("SegmentController:", "Deleting slug:", segmentReq.Slug)
 	err := c.service.Delete(slug)
 	if err != nil {
+		log.Println("Error:" + err.Error())
 		return ctx.JSON(http.StatusConflict, map[string]interface{}{"error": err.Error()})
 	}
 
