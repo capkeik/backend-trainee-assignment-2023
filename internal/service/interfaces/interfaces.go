@@ -16,3 +16,7 @@ type SegmentService interface {
 	Create(slug string) (*model.Segment, error)
 	Delete(slug string) error
 }
+
+type UpdateRecorder interface {
+	RecordUpdate(added, removed *[]string, id int32) error
+}

@@ -3,16 +3,17 @@ package service
 import (
 	"context"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/model"
-	"github.com/capkeik/backend-trainee-assignment-2023/internal/repository/pg"
+	"github.com/capkeik/backend-trainee-assignment-2023/internal/service/interfaces"
 	"github.com/capkeik/backend-trainee-assignment-2023/internal/web/response"
 )
 
 type User struct {
-	User *pg.UserRepo
+	User     interfaces.UserService
+	Recorder interfaces.UpdateRecorder
 }
 
-func NewUserService(user *pg.UserRepo) *User {
-	return &User{User: user}
+func NewUserService(user interfaces.UserService, record interfaces.UpdateRecorder) *User {
+	return &User{User: user, Recorder: record}
 }
 
 func (s *User) GetUserSegments(id int32) (*[]string, error) {
@@ -28,5 +29,10 @@ func (s *User) UpdateUserSegments(
 	slugsToAdd, slugsToRemove *[]string,
 	userID int32,
 ) (*response.UserChanges, error) {
-	return s.User.UpdateUserSegments(ctx, slugsToAdd, slugsToRemove, userID)
+	updates, err := s.User.UpdateUserSegments(ctx, slugsToAdd, slugsToRemove, userID)
+	if err != nil {
+		return nil, err
+	}
+	err = s.Recorder.RecordUpdate(updates.Added, updates.Removed, updates.ID)
+	return updates, nil
 }

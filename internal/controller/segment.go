@@ -28,7 +28,7 @@ func (c SegmentController) Create(ctx echo.Context) error {
 	if err := ctx.Bind(&segmentReq); err != nil {
 		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{"error": "Invalid JSON"})
 	}
-	log.Println("creating new slug:", segmentReq.Slug)
+	log.Println("SegmentController:", "creating new slug:", segmentReq.Slug)
 	slug := segmentReq.Slug
 
 	_, err := c.service.Create(slug)

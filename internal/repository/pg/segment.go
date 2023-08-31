@@ -18,7 +18,7 @@ func NewSegmentRepo(db *gorm.DB) SegmentRepo {
 func (r *SegmentRepo) Create(slug string) (*model.Segment, error) {
 	fn := "repository.pg.SegmentRepo.Create"
 	segment := &model.Segment{Slug: slug}
-	log.Println("slug:", slug)
+	log.Println(fn, "Creating new slug:", slug)
 	res := r.db.Create(segment)
 	err := res.Error
 

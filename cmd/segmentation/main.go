@@ -42,7 +42,9 @@ func run() error {
 	userRepo := pg2.NewUserRepo(db)
 	segmentRepo := pg2.NewSegmentRepo(db)
 
-	userService := service.NewUserService(&userRepo)
+	recordService := service.NewRecordService(db)
+	userService := service.NewUserService(&userRepo, &recordService)
+
 	userController := controller.NewUsers(ctx, userService)
 	segmentController := controller.NewSegments(ctx, &segmentRepo)
 
