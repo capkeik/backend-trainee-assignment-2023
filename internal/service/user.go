@@ -37,6 +37,6 @@ func (s *User) UpdateUserSegments(
 		return nil, err
 	}
 	log.Println("UserService: ", "Recording changes")
-	err = s.Recorder.RecordUpdate(updates.Added, updates.Removed, updates.ID)
+	_ = s.Recorder.RecordUpdate(updates.Added, updates.Removed, updates.ID)
 	return updates, nil
 }
